@@ -8,7 +8,23 @@ bool Bishop::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board
 
     int diffX = to.x() - from.x();
     int diffY = to.y() - from.y();
-    if(diffX == diffY || diffX == -diffY) return true;
+    if(abs(diffX) != abs(diffY)) return false;
 
-    return false;
+    int directionX = (to.x() > from.x()) ? 1 : -1;
+    int directionY = (to.y() > from.y()) ? 1 : -1;
+    int x = from.x() + directionX;
+    int y = from.y() + directionY;
+    while(x != to.x() && y != to.y())
+    {
+        if(board->getPieceAt(QPoint(x,y)))
+            return false;
+
+        x += directionX;
+        y += directionY;
+    }
+
+    ChessPiece *piece = board->getPieceAt(to);
+    if(piece && piece->getColor()==m_color) return false;
+
+    return true;
 }
