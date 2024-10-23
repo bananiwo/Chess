@@ -13,7 +13,9 @@ public:
     virtual ~ChessPiece(){}
     virtual bool isValidMove(const QPoint& from, const QPoint& to, ChessBoard* board) const = 0;
     Color getColor() const {return m_color;}
+    void setHasMovedTrue() {m_hasMoved = true;}
 
 protected:
     Color m_color;
+    bool m_hasMoved = false;
 };
