@@ -6,8 +6,11 @@ bool King::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board) 
 {
     if(to==from) return false;
 
-    if(abs(to.x()-from.x()) <=1 && abs(to.y()-from.y()) <= 1) return true;
+    if(abs(to.x()-from.x()) > 1 || abs(to.y()-from.y()) > 1) return false;
 
-    return false;
+    ChessPiece *piece = board->getPieceAt(to);
+    if(piece && piece->getColor()==m_color) return false;
+
+    return true;
 
 }
