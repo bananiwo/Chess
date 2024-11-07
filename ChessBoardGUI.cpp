@@ -13,6 +13,7 @@ ChessBoardGUI::ChessBoardGUI(ChessBoard* boardLogic, QWidget *parent)
     m_gridLayout = new QGridLayout();
     m_gridLayout->setSpacing(0);
     setLayout(m_gridLayout);
+    setupIcons();
     setupChessBoard();
 }
 
@@ -38,6 +39,23 @@ void ChessBoardGUI::setupChessBoard()
     }
     drawAllSquares();
     drawAllPieces();
+}
+
+void ChessBoardGUI::setupIcons()
+{
+    m_whitePawn = QIcon(":/images/images/white-pawn.png");
+    m_whiteRook = QIcon(":/images/images/white-rook.png");
+    m_whiteBishop = QIcon(":/images/images/white-bishop.png");
+    m_whiteKnight = QIcon(":/images/images/white-knight.png");
+    m_whiteQueen = QIcon(":/images/images/white-queen.png");
+    m_whiteKing = QIcon(":/images/images/white-king.png");
+
+    m_blackPawn = QIcon(":/images/images/black-pawn.png");
+    m_blackRook = QIcon(":/images/images/black-rook.png");
+    m_blackBishop = QIcon(":/images/images/black-bishop.png");
+    m_blackKnight = QIcon(":/images/images/black-knight.png");
+    m_blackQueen = QIcon(":/images/images/black-queen.png");
+    m_blackKing = QIcon(":/images/images/black-king.png");
 }
 
 void ChessBoardGUI::drawAllSquares()
@@ -126,38 +144,44 @@ void ChessBoardGUI::highlightSquareRedBorder(const QPoint &position)
 {
     QPushButton *square = m_boardSquares[position.y()][position.x()];
     if((position.x()+position.y())%2==0)
-        square->setStyleSheet("background-color: magenta;"
+        square->setStyleSheet("background-color: yellow;"
                               // "border: 1px solid red"
                               );
     else
-        square->setStyleSheet("background-color: magenta;"
+        square->setStyleSheet("background-color: yellow;"
                               // "border: 1px solid red"
                               );
 }
 
 void ChessBoardGUI::drawPiece(const QPoint &position)
 {
+        QSize iconSize(80, 80);
         ChessPiece *piece = m_boardLogic->getPieceAt(position);
-        if(dynamic_cast<Rook*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("R");
+        QPushButton *square = m_boardSquares[position.y()][position.x()];
+        QIcon icon;
+        if(dynamic_cast<Pawn*>(piece)){
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whitePawn : m_blackPawn);
         }
-        else if(dynamic_cast<Pawn*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("P");
+        else if(dynamic_cast<Rook*>(piece)){
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteRook : m_blackRook);
         }
         else if(dynamic_cast<Bishop*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("B");
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteBishop: m_blackBishop);
         }
         else if(dynamic_cast<Knight*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("K");
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteKnight : m_blackKnight);
         }
         else if(dynamic_cast<Queen*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("Q");
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteQueen: m_blackQueen);
         }
         else if(dynamic_cast<King*>(piece)){
-            m_boardSquares[position.y()][position.x()]->setText("KING");
+            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteKing: m_blackKing);
         }
-        else
-            m_boardSquares[position.y()][position.x()]->setText("");
+        // else {
+        //     square->setIcon(QIcon());
+        // }
+        square->setIcon(icon);
+        square->setIconSize(iconSize);
 }
 
 void ChessBoardGUI::drawAllPieces()

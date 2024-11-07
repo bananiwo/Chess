@@ -25,39 +25,50 @@ ChessPiece* ChessBoard::getPieceAt(const QPoint& pos) const
 
 void ChessBoard::setupBoard()
 {
+    // setup white
     m_board[0][0] = new Rook(ChessPiece::White);
-    // m_board[0][7] = new Rook(ChessPiece::White);
+    m_board[0][1] = new Knight(ChessPiece::White);
+    m_board[0][2] = new Bishop(ChessPiece::White);
+    m_board[0][3] = new Queen(ChessPiece::White);
+    m_board[0][4] = new King(ChessPiece::White);
+    m_board[0][5] = new Bishop(ChessPiece::White);
+    m_board[0][6] = new Knight(ChessPiece::White);
+    m_board[0][7] = new Rook(ChessPiece::White);
     for(int i=0; i<8; i++)
     {
         m_board[1][i] = new Pawn(ChessPiece::White);
     }
-    // m_board[0][2] = new Bishop(ChessPiece::White);
-    // m_board[0][5] = new Bishop(ChessPiece::White);
-    // m_board[0][1] = new Knight(ChessPiece::White);
-    // m_board[0][6] = new Knight(ChessPiece::White);
-    // m_board[0][3] = new Queen(ChessPiece::White);
-    // m_board[0][4] = new King(ChessPiece::White);
-
-    m_board[4][6] = new Rook(ChessPiece::White);
-    m_board[5][6] = new Pawn(ChessPiece::White);
-    m_board[4][5] = new Pawn(ChessPiece::White);
+    // setup black
+    m_board[7][0] = new Rook(ChessPiece::Black);
+    m_board[7][1] = new Knight(ChessPiece::Black);
+    m_board[7][2] = new Bishop(ChessPiece::Black);
+    m_board[7][3] = new Queen(ChessPiece::Black);
+    m_board[7][4] = new King(ChessPiece::Black);
+    m_board[7][5] = new Bishop(ChessPiece::Black);
+    m_board[7][6] = new Knight(ChessPiece::Black);
+    m_board[7][7] = new Rook(ChessPiece::Black);
+    for(int i=0; i<8; i++)
+    {
+        m_board[6][i] = new Pawn(ChessPiece::Black);
+    }
 }
 
 bool ChessBoard::movePiece(const QPoint& from, const QPoint& to)
 {
     ChessPiece *piece = getPieceAt(from);
     if(!piece)
-    {
-        qDebug("there is no piece here\n");
         return false;
-    }
+
     if(piece->isValidMove(from, to, this))
     {
         m_board[to.y()][to.x()] = piece;
         m_board[from.y()][from.x()] = nullptr;
-        qDebug() << QString("Piece moved to %1 %2").arg(to.x()).arg(to.y());
+        //if piece being moved is a Pawn
+        if(dynamic_cast<Pawn*>(piece))
+        {
+            piece->setHasMovedTrue();
+        }
         return true;
     }
-    qDebug("Cant move here");
     return false;
 }

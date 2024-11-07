@@ -22,6 +22,18 @@ private:
     ChessBoard *m_boardLogic;
     GameState m_gameState = GameState::SelectPiece;
     QPoint m_selectedPosition;
+    QIcon m_whitePawn;
+    QIcon m_whiteRook;
+    QIcon m_whiteBishop;
+    QIcon m_whiteKnight;
+    QIcon m_whiteQueen;
+    QIcon m_whiteKing;
+    QIcon m_blackPawn;
+    QIcon m_blackRook;
+    QIcon m_blackBishop;
+    QIcon m_blackKnight;
+    QIcon m_blackQueen;
+    QIcon m_blackKing;
 
     void highlightSquareBlueBorder(const QPoint &position);
     void highlightSquareRedBorder(const QPoint &position);
@@ -29,5 +41,6 @@ private:
     void drawAllSquares();
     void drawAllPieces();
     void setupChessBoard();
+    void setupIcons();
 signals:
 };
