@@ -16,4 +16,5 @@ public:
 
 private:
     ChessBoardGUI *m_chessBoard;
+    ChessBoard *m_chessBoardLogic;
 };

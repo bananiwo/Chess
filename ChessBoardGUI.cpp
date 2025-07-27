@@ -20,6 +20,7 @@ ChessBoardGUI::ChessBoardGUI(ChessBoard* boardLogic, QWidget *parent)
 
 void ChessBoardGUI::setupChessBoard()
 {
+    qDebug("setupChessBoard - GUI");
     const int boardSize = 8;
     m_boardSquares.resize(boardSize);
 

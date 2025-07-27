@@ -13,6 +13,9 @@ public:
     enum GameState {MovePiece, SelectPiece};
     explicit ChessBoardGUI(ChessBoard* boardLogic, QWidget *parent = nullptr);
 
+public slots:
+    void setupChessBoard();
+
 private slots:
     void handleSquareClicked();
 
@@ -40,7 +43,7 @@ private:
     void drawPiece(const QPoint &position);
     void drawAllSquares();
     void drawAllPieces();
-    void setupChessBoard();
+
     void setupIcons();
 signals:
 };
