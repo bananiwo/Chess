@@ -25,6 +25,7 @@ ChessPiece* ChessBoard::getPieceAt(const QPoint& pos) const
 
 void ChessBoard::setupBoard()
 {
+
     qDebug("setupBoard - Logic");
     // setup white
     m_board[0][0] = new Rook(ChessPiece::White);
