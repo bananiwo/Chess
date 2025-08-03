@@ -11,7 +11,7 @@ public:
 
     ChessPiece(Color color) : m_color(color){}
     virtual ~ChessPiece(){}
-    virtual bool isValidMove(const QPoint& from, const QPoint& to, ChessBoard* board) const = 0;
+    virtual bool canMove(const QPoint& from, const QPoint& to) const = 0;
     Color getColor() const {return m_color;}
     void setHasMovedTrue() {m_hasMoved = true;}
 

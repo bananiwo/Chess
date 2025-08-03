@@ -3,14 +3,14 @@
 
 Queen::Queen(Color color) : ChessPiece(color) {}
 
-bool Queen::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board) const
+bool Queen::canMove(const QPoint &from, const QPoint &to) const
 {
     if(to==from) return false;
 
     int diffX = to.x() - from.x();
     int diffY = to.y() - from.y();
     if((abs(diffX) != abs(diffY)) && (from.x() != to.x()) && (from.y() != to.y())) return false;
-    if(from.x() == to.x())
+    /*if(from.x() == to.x())
     {
         int direction = (to.y() > from.y()) ? 1 : -1;
         for(int y=from.y()+direction; y!=to.y(); y+=direction)
@@ -40,10 +40,10 @@ bool Queen::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board)
             x += directionX;
             y += directionY;
         }
-    }
+    }*/
 
-    ChessPiece *piece = board->getPieceAt(to);
-    if(piece && piece->getColor()==m_color) return false;
+    // ChessPiece *piece = board->getPieceAt(to);
+    // if(piece && piece->getColor()==m_color) return false;
 
     return true;
 }

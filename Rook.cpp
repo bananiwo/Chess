@@ -2,12 +2,12 @@
 
 Rook::Rook(Color color) : ChessPiece(color) {}
 
-bool Rook::isValidMove(const QPoint& from, const QPoint& to, ChessBoard* board) const
+bool Rook::canMove(const QPoint& from, const QPoint& to) const
 {
     if(to==from) return false;
     if(from.x() != to.x() && from.y() != to.y()) return false;
 
-    if(from.x() == to.x())
+    /*if(from.x() == to.x())
     {
         int direction = (to.y() > from.y()) ? 1 : -1;
         for(int y=from.y()+direction; y!=to.y(); y+=direction)
@@ -25,7 +25,7 @@ bool Rook::isValidMove(const QPoint& from, const QPoint& to, ChessBoard* board) 
     }
 
     ChessPiece *piece = board->getPieceAt(to);
-    if(piece && piece->getColor()==m_color) return false;
+    if(piece && piece->getColor()==m_color) return false;*/
 
 
     return true;

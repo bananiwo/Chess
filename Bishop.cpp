@@ -2,7 +2,7 @@
 
 Bishop::Bishop(Color color) : ChessPiece(color) {}
 
-bool Bishop::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board) const
+bool Bishop::canMove(const QPoint &from, const QPoint &to) const
 {
     if(to==from) return false;
 
@@ -10,7 +10,7 @@ bool Bishop::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board
     int diffY = to.y() - from.y();
     if(abs(diffX) != abs(diffY)) return false;
 
-    int directionX = (to.x() > from.x()) ? 1 : -1;
+    /*int directionX = (to.x() > from.x()) ? 1 : -1;
     int directionY = (to.y() > from.y()) ? 1 : -1;
     int x = from.x() + directionX;
     int y = from.y() + directionY;
@@ -24,7 +24,7 @@ bool Bishop::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board
     }
 
     ChessPiece *piece = board->getPieceAt(to);
-    if(piece && piece->getColor()==m_color) return false;
+    if(piece && piece->getColor()==m_color) return false;*/
 
     return true;
 }

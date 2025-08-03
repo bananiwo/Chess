@@ -8,7 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
     m_chessBoardLogic = new ChessBoard();
-    m_chessBoard = new ChessBoardGUI(m_chessBoardLogic, this);
+    m_chessBoard = new ChessBoardGUI();
+    m_controller = new Controller(m_chessBoard, m_chessBoardLogic);
+    QObject::connect(m_chessBoard, &ChessBoardGUI::cellClicked,
+                     m_controller, &Controller::onCellClicked);
+
+
     QWidget *mainWidget = new QWidget(this);
     QHBoxLayout *layout = new QHBoxLayout(mainWidget);
     layout->addWidget(m_chessBoard);

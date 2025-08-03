@@ -7,20 +7,19 @@
 #include "King.h"
 #include <iostream>
 
-ChessBoardGUI::ChessBoardGUI(ChessBoard* boardLogic, QWidget *parent)
-    : m_boardLogic(boardLogic), QWidget{parent}
+ChessBoardGUI::ChessBoardGUI(QWidget *parent)
+    : QWidget{parent}
 {
     m_gridLayout = new QGridLayout();
     m_gridLayout->setSpacing(0);
     setLayout(m_gridLayout);
-    setupIcons();
+    loadIcons();
     setupChessBoard();
 }
 
 
 void ChessBoardGUI::setupChessBoard()
 {
-    qDebug("setupChessBoard - GUI");
     const int boardSize = 8;
     m_boardSquares.resize(boardSize);
 
@@ -39,10 +38,9 @@ void ChessBoardGUI::setupChessBoard()
         }
     }
     drawAllSquares();
-    drawAllPieces();
 }
 
-void ChessBoardGUI::setupIcons()
+void ChessBoardGUI::loadIcons()
 {
     m_whitePawn = QIcon(":/images/images/white-pawn.png");
     m_whiteRook = QIcon(":/images/images/white-rook.png");
@@ -83,7 +81,10 @@ void ChessBoardGUI::handleSquareClicked()
 
     int row = clickedButton->property("row").toInt();
     int col = clickedButton->property("col").toInt();
-    QPoint position(col, row);
+
+
+    emit cellClicked(row, col);
+    /*QPoint position(col, row);
     qDebug() << "button clicked at row " << row <<" col " << col;
 
     if(m_gameState == GameState::SelectPiece)
@@ -125,7 +126,7 @@ void ChessBoardGUI::handleSquareClicked()
         drawAllSquares();
         m_gameState = GameState::SelectPiece;
     }
-    drawAllPieces();
+    drawAllPieces();*/
 
 
 }
@@ -145,51 +146,47 @@ void ChessBoardGUI::highlightSquareRedBorder(const QPoint &position)
 {
     QPushButton *square = m_boardSquares[position.y()][position.x()];
     if((position.x()+position.y())%2==0)
-        square->setStyleSheet("background-color: yellow;"
-                              // "border: 1px solid red"
+        square->setStyleSheet("background-color: white;"
+                               "border: 2px solid red"
                               );
     else
-        square->setStyleSheet("background-color: yellow;"
-                              // "border: 1px solid red"
+        square->setStyleSheet("background-color: gray;"
+                               "border: 2px solid red"
                               );
 }
 
-void ChessBoardGUI::drawPiece(const QPoint &position)
+void ChessBoardGUI::setPieceAt(const QPoint& pos, const PieceData& data)
 {
-        QSize iconSize(80, 80);
-        ChessPiece *piece = m_boardLogic->getPieceAt(position);
-        QPushButton *square = m_boardSquares[position.y()][position.x()];
-        QIcon icon;
-        if(dynamic_cast<Pawn*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whitePawn : m_blackPawn);
-        }
-        else if(dynamic_cast<Rook*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteRook : m_blackRook);
-        }
-        else if(dynamic_cast<Bishop*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteBishop: m_blackBishop);
-        }
-        else if(dynamic_cast<Knight*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteKnight : m_blackKnight);
-        }
-        else if(dynamic_cast<Queen*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteQueen: m_blackQueen);
-        }
-        else if(dynamic_cast<King*>(piece)){
-            icon = (piece->getColor()==ChessPiece::Color::White ? m_whiteKing: m_blackKing);
-        }
-        // else {
-        //     square->setIcon(QIcon());
-        // }
-        square->setIcon(icon);
-        square->setIconSize(iconSize);
-}
+    QPushButton* square = m_boardSquares[pos.y()][pos.x()];
+    QIcon icon;
 
-void ChessBoardGUI::drawAllPieces()
-{
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            drawPiece(QPoint(i, j));
+    if (data.type == PieceType::None) {
+        square->setIcon(QIcon());
+        return;
+    }
+
+    if (data.color == ChessPiece::White) {
+        switch (data.type) {
+        case PieceType::Pawn: icon = m_whitePawn; break;
+        case PieceType::Rook: icon = m_whiteRook; break;
+        case PieceType::Knight: icon = m_whiteKnight; break;
+        case PieceType::Bishop: icon = m_whiteBishop; break;
+        case PieceType::Queen: icon = m_whiteQueen; break;
+        case PieceType::King: icon = m_whiteKing; break;
+        default: break;
+        }
+    } else {
+        switch (data.type) {
+        case PieceType::Pawn: icon = m_blackPawn; break;
+        case PieceType::Rook: icon = m_blackRook; break;
+        case PieceType::Knight: icon = m_blackKnight; break;
+        case PieceType::Bishop: icon = m_blackBishop; break;
+        case PieceType::Queen: icon = m_blackQueen; break;
+        case PieceType::King: icon = m_blackKing; break;
+        default: break;
         }
     }
+
+    square->setIcon(icon);
+    square->setIconSize(QSize(80, 80));
 }

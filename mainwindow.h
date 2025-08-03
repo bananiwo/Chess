@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QVector>
 #include "ChessBoardGUI.h"
+#include "Controller.h"
 
 class MainWindow : public QMainWindow
 {
@@ -17,4 +18,5 @@ public:
 private:
     ChessBoardGUI *m_chessBoard;
     ChessBoard *m_chessBoardLogic;
+    Controller* m_controller;
 };

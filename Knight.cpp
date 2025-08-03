@@ -2,7 +2,7 @@
 
 Knight::Knight(Color color) : ChessPiece(color) {}
 
-bool Knight::isValidMove(const QPoint &from, const QPoint &to, ChessBoard* board) const
+bool Knight::canMove(const QPoint &from, const QPoint &to) const
 {
     if(to==from) return false;
 
