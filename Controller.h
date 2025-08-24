@@ -12,6 +12,7 @@ public:
     explicit Controller(ChessBoardGUI *view, ChessBoard *model, QObject *parent = nullptr);
     void updateView();
     PieceData getPieceDataAt(const QPoint& pos) const;
+    void restart();
 
 
 private:

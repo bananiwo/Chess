@@ -22,8 +22,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     QPushButton *button = new QPushButton("restart", this);
     layout->addWidget(button);
-    connect(button, &QPushButton::clicked, this, [this](){m_chessBoardLogic->setupBoard();} );
-    connect(button, &QPushButton::clicked, this, [this](){m_chessBoard->setupChessBoard();} );
+    connect(button, &QPushButton::clicked, this, [this](){onRestartPressed();});
 }
 
 MainWindow::~MainWindow() {}
+
+void MainWindow::onRestartPressed()
+{
+    m_controller->restart();
+}

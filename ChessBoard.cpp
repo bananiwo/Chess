@@ -91,6 +91,19 @@ void ChessBoard::movePiece(const QPoint& from, const QPoint& to)
     }
 }
 
+void ChessBoard::restartBoard()
+{
+    for(int i=0; i<8; i++){
+        for(int j=0; j<8; j++){
+            // if(m_grid[i][j] != nullptr){
+                delete(m_grid[i][j]);
+                m_grid[i][j] = nullptr;
+            // }
+        }
+    }
+    setupBoard();
+}
+
 bool ChessBoard::isDiagonalPathClear(const QPoint &from, const QPoint &to) const
 {
     int dx = to.x () - from.x();

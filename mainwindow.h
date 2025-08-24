@@ -19,4 +19,7 @@ private:
     ChessBoardGUI *m_chessBoard;
     ChessBoard *m_chessBoardLogic;
     Controller* m_controller;
+
+private:
+    void onRestartPressed();
 };

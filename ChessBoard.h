@@ -13,6 +13,7 @@ public:
     ChessPiece *getPieceAt(const QPoint& pos) const;
     bool tryMovePiece(const QPoint& from, const QPoint& to);
     void movePiece(const QPoint& from, const QPoint& to);
+    void restartBoard();
 
 private:
     bool isDiagonalPathClear(const QPoint &from, const QPoint &to) const;

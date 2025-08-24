@@ -82,3 +82,10 @@ PieceData Controller::getPieceDataAt(const QPoint& pos) const
 
     return {PieceType::None, ChessPiece::White};
 }
+
+void Controller::restart()
+{
+    m_model->restartBoard();
+    m_gameState = GameState::SelectPiece;
+    updateView();
+}
