@@ -53,7 +53,7 @@ void ChessBoard::setupBoard()
     }
 }
 
-bool ChessBoard::tryMovePiece(const QPoint& from, const QPoint& to)
+bool ChessBoard::tryMovePiece(const QPoint& from, const QPoint& to) const
 {
     ChessPiece *piece = getPieceAt(from);
     if(!piece) return false;
@@ -67,7 +67,10 @@ bool ChessBoard::tryMovePiece(const QPoint& from, const QPoint& to)
         if(!isDiagonalPathClear(from, to) && !isStraightPathClear(from, to)) return false;
     }  else if(dynamic_cast<Pawn*>(piece)){
         if(!isPawnCaptureValid(from, to)) return false;
+    }  else if(dynamic_cast<King*>(piece)){
+        if(isGuardedByEnemy(piece->getColor(), to)) return false;
     }
+
 
     return true;
 }
@@ -180,6 +183,37 @@ void ChessBoard::handlePromotion(const QPoint &pos)
         piece = new Queen(color);
         m_grid[pos.y()][pos.x()] = piece;
     }
+}
+
+bool ChessBoard::isGuardedByEnemy(ChessPiece::Color color, const QPoint &to) const
+{
+    ChessPiece::Color enemyColor = (color == ChessPiece::Color::White ? ChessPiece::Color::Black : ChessPiece::Color::White);
+    for (int row=0; row<8; row++){
+        for (int col = 0; col < 8; ++col) {
+            QPoint from = QPoint(col, row);
+            ChessPiece *piece = getPieceAt(from);
+            if (!piece || piece->getColor() != enemyColor) continue; // rozpatrujemy tylko przeciwnika
+            bool enemyPieceIsKing = dynamic_cast<King*>(piece);
+            bool enemyPieceIsPawn= dynamic_cast<Pawn*>(piece);
+            if (enemyPieceIsKing)
+            {
+                int dx = std::abs(to.x() - col);
+                int dy = std::abs(to.y() - row);
+                if (dx <= 1 && dy <= 1) return true;
+            }
+            else if (enemyPieceIsPawn)
+            {
+                int directionModifier = (color==ChessPiece::Color::White?-1:1);
+                int dx = std::abs(to.x() - col);
+                int dy = (to.y() - row) * directionModifier;
+                // qDebug() << QString("row=%1 col=%2 dx=%3 dy=%4 to.x=%5 to.y=%6").arg(row).arg(col).arg(dx).arg(dy).arg(to.x()).arg(to.y());
+                if(dx==1 && dy==1) return true;
+            }
+            else if(ChessBoard::tryMovePiece(from, to)) return true;
+
+        }
+    }
+    return false;
 }
 
 

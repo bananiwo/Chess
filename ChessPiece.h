@@ -1,6 +1,6 @@
 #pragma once
 #include <QPoint>
-#include "ChessBoard.h"
+//#include "ChessBoard.h"
 
 class ChessBoard;
 

@@ -20,6 +20,7 @@ private:
     ChessBoard *m_model;
     enum GameState {MovePiece, SelectPiece};
     GameState m_gameState = GameState::SelectPiece;
+    ChessPiece::Color m_turn = ChessPiece::Color::White;
     QPoint m_selectedPos;
 
 

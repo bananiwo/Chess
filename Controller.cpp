@@ -31,8 +31,10 @@ void Controller::onCellClicked(int row, int column)
     QPoint pos(column, row);
     if(m_gameState == GameState::SelectPiece)
     {
+        qDebug("GameState::SelectPiece");
         ChessPiece *piece = m_model->getPieceAt(pos);
         if(!piece) return;
+        if(m_turn != piece->getColor()) return;
         m_selectedPos = pos;
         // highlight selected piece
         m_view->highlightSquareBlueBorder(pos);
@@ -51,15 +53,14 @@ void Controller::onCellClicked(int row, int column)
     else if (m_gameState == GameState::MovePiece)
     {
         qDebug("GameState::MovePiece");
-        // if(m_selectedPosition = QPoint::isNull()) return;
-
         ChessPiece *piece = m_model->getPieceAt(pos);
         if(m_model->tryMovePiece(m_selectedPos, pos))
-        {
+        {   // on successful move
             m_model->movePiece(m_selectedPos, pos);
+            m_turn = (m_turn == ChessPiece::Color::White ? ChessPiece::Color::Black : ChessPiece::Color::White);
         }
         else
-        {
+        {   // ont not successful move
             qDebug("Not a valid move");
         }
 
