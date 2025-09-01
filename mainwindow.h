@@ -22,4 +22,5 @@ private:
 
 private:
     void onRestartPressed();
+    void onSwapPressed();
 };

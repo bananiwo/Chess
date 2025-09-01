@@ -16,13 +16,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     QWidget *mainWidget = new QWidget(this);
     QHBoxLayout *layout = new QHBoxLayout(mainWidget);
+    QWidget *buttonsWidget = new QWidget(this);
+    QVBoxLayout *buttonsLayout = new QVBoxLayout(buttonsWidget);
+    // buttonsWidget->setLayout(buttonsLayout);
+
     layout->addWidget(m_chessBoard);
+    layout->addWidget(buttonsWidget);
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
 
-    QPushButton *button = new QPushButton("restart", this);
-    layout->addWidget(button);
-    connect(button, &QPushButton::clicked, this, [this](){onRestartPressed();});
+    QPushButton *restartButton = new QPushButton("restart", buttonsWidget);
+    buttonsLayout->addWidget(restartButton);
+    connect(restartButton, &QPushButton::clicked, this, [this](){onRestartPressed();});
+
+    QPushButton *swapButton = new QPushButton("swap", buttonsWidget);
+    buttonsLayout->addWidget(swapButton);
+    connect(swapButton, &QPushButton::clicked, this, [this](){onSwapPressed();});
+
+    buttonsLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }
 
 MainWindow::~MainWindow() {}
@@ -30,4 +41,9 @@ MainWindow::~MainWindow() {}
 void MainWindow::onRestartPressed()
 {
     m_controller->restart();
+}
+
+void MainWindow::onSwapPressed()
+{
+    qDebug() << "MainWindow::onSwapPressed";
 }
