@@ -88,5 +88,6 @@ void Controller::restart()
 {
     m_model->restartBoard();
     m_gameState = GameState::SelectPiece;
+    m_turn = ChessPiece::Color::White;
     updateView();
 }
