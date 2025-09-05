@@ -23,6 +23,8 @@ private:
     void handlePromotion(const QPoint &pos);
     bool isGuardedByEnemy(ChessPiece::Color color, const QPoint &to) const;
 
+
 private:
     QVector<QVector<ChessPiece*>> m_grid;
+    bool m_isBoardReversed = false;
 };

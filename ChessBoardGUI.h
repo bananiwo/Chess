@@ -23,15 +23,17 @@ signals:
     void cellClicked(int row, int col);
 
 public:
-    void setPieceAt(const QPoint& pos, const PieceData& data);
-    void highlightSquareBlueBorder(const QPoint &position);
-    void highlightSquareRedBorder(const QPoint &position);
+    void setPieceAt(QPoint pos, const PieceData& data);
+    void highlightSquareBlueBorder(QPoint position);
+    void highlightSquareRedBorder(QPoint position);
     void drawAllSquares();
+    void swapSides();
 
 private:
     QGridLayout *m_gridLayout;
     QVector<QVector<QPushButton*>> m_boardSquares;
     QPoint m_selectedPosition;
+    bool m_isBoardReversed = false;
     QIcon m_whitePawn;
     QIcon m_whiteRook;
     QIcon m_whiteBishop;
@@ -46,6 +48,6 @@ private:
     QIcon m_blackKing;
 
 
-
+    QPoint mirrorPointIfNeeded(QPoint point);
     void loadIcons();
 };

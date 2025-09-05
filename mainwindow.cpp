@@ -46,4 +46,6 @@ void MainWindow::onRestartPressed()
 void MainWindow::onSwapPressed()
 {
     qDebug() << "MainWindow::onSwapPressed";
+    m_chessBoard->swapSides();
+    m_controller->updateView();
 }

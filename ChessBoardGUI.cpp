@@ -74,6 +74,22 @@ void ChessBoardGUI::drawAllSquares()
     }
 }
 
+void ChessBoardGUI::swapSides()
+{
+    qDebug() << "ChessBoardGUI::swapSides";
+    m_isBoardReversed = !m_isBoardReversed;
+
+}
+
+QPoint ChessBoardGUI::mirrorPointIfNeeded(QPoint point)
+{
+    int revX = m_isBoardReversed ? (7-point.x()) : point.x();
+    int revY = m_isBoardReversed ? (7-point.y()) : point.y();
+    return QPoint(revX, revY);
+}
+
+
+
 void ChessBoardGUI::handleSquareClicked()
 {
     QPushButton *clickedButton = qobject_cast<QPushButton*>(sender());
@@ -81,58 +97,15 @@ void ChessBoardGUI::handleSquareClicked()
 
     int row = clickedButton->property("row").toInt();
     int col = clickedButton->property("col").toInt();
-
+    row = m_isBoardReversed ? (7-row) : row;
+    col = m_isBoardReversed ? (7-col) : col;
 
     emit cellClicked(row, col);
-    /*QPoint position(col, row);
-    qDebug() << "button clicked at row " << row <<" col " << col;
-
-    if(m_gameState == GameState::SelectPiece)
-    {
-        qDebug("GameState::SelectPiece");
-        ChessPiece *piece = m_boardLogic->getPieceAt(QPoint(col, row));
-        if(!piece) return;
-        m_selectedPosition = QPoint(col, row);
-        // highlight selected piece
-        highlightSquareBlueBorder(m_selectedPosition);
-        // highlight possible moves
-        for (int i = 0; i < 8; ++i) {
-            for (int j = 0; j < 8; ++j) {
-                QPoint toPosition(i, j);
-                if(piece->isValidMove(QPoint(col, row), toPosition, m_boardLogic))
-                {
-                    highlightSquareRedBorder(toPosition);
-                }
-            }
-        }
-        m_gameState = GameState::MovePiece;
-    }
-
-    else if (m_gameState == GameState::MovePiece)
-    {
-        qDebug("GameState::MovePiece");
-        // if(m_selectedPosition = QPoint::isNull()) return;
-
-        ChessPiece *piece = m_boardLogic->getPieceAt(m_selectedPosition);
-        if(piece->isValidMove(m_selectedPosition, QPoint(col, row), m_boardLogic))
-        {
-            m_boardLogic->movePiece(m_selectedPosition, QPoint(col,row));
-        }
-        else
-        {
-            qDebug("Not a valid move");
-        }
-
-        drawAllSquares();
-        m_gameState = GameState::SelectPiece;
-    }
-    drawAllPieces();*/
-
-
 }
 
-void ChessBoardGUI::highlightSquareBlueBorder(const QPoint &position)
+void ChessBoardGUI::highlightSquareBlueBorder(QPoint position)
 {
+    position = mirrorPointIfNeeded(position);
     QPushButton *square = m_boardSquares[position.y()][position.x()];
     if((position.x()+position.y())%2==0)
         square->setStyleSheet("background-color: white;"
@@ -142,8 +115,9 @@ void ChessBoardGUI::highlightSquareBlueBorder(const QPoint &position)
                               "border: 2px solid blue");
 }
 
-void ChessBoardGUI::highlightSquareRedBorder(const QPoint &position)
+void ChessBoardGUI::highlightSquareRedBorder(QPoint position)
 {
+    position = mirrorPointIfNeeded(position);
     QPushButton *square = m_boardSquares[position.y()][position.x()];
     if((position.x()+position.y())%2==0)
         square->setStyleSheet("background-color: white;"
@@ -155,8 +129,9 @@ void ChessBoardGUI::highlightSquareRedBorder(const QPoint &position)
                               );
 }
 
-void ChessBoardGUI::setPieceAt(const QPoint& pos, const PieceData& data)
+void ChessBoardGUI::setPieceAt(QPoint pos, const PieceData& data)
 {
+    pos = mirrorPointIfNeeded(pos);
     QPushButton* square = m_boardSquares[pos.y()][pos.x()];
     QIcon icon;
 
