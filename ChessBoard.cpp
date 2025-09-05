@@ -5,7 +5,6 @@
 #include "Knight.h"
 #include "Queen.h"
 #include "King.h"
-#include <iostream>
 #include <qDebug>
 
 ChessBoard::ChessBoard()
@@ -26,30 +25,30 @@ ChessPiece* ChessBoard::getPieceAt(const QPoint& pos) const
 void ChessBoard::setupBoard()
 {
     // setup white
-    m_grid[0][0] = new Rook(ChessPiece::White);
-    m_grid[0][1] = new Knight(ChessPiece::White);
-    m_grid[0][2] = new Bishop(ChessPiece::White);
-    m_grid[0][3] = new Queen(ChessPiece::White);
-    m_grid[0][4] = new King(ChessPiece::White);
-    m_grid[0][5] = new Bishop(ChessPiece::White);
-    m_grid[0][6] = new Knight(ChessPiece::White);
-    m_grid[0][7] = new Rook(ChessPiece::White);
+    m_grid[7][0] = new Rook(ChessPiece::White);
+    m_grid[7][1] = new Knight(ChessPiece::White);
+    m_grid[7][2] = new Bishop(ChessPiece::White);
+    m_grid[7][3] = new Queen(ChessPiece::White);
+    m_grid[7][4] = new King(ChessPiece::White);
+    m_grid[7][5] = new Bishop(ChessPiece::White);
+    m_grid[7][6] = new Knight(ChessPiece::White);
+    m_grid[7][7] = new Rook(ChessPiece::White);
     for(int i=0; i<8; i++)
     {
-        m_grid[1][i] = new Pawn(ChessPiece::White);
+        m_grid[6][i] = new Pawn(ChessPiece::White);
     }
     // setup black
-    m_grid[7][0] = new Rook(ChessPiece::Black);
-    m_grid[7][1] = new Knight(ChessPiece::Black);
-    m_grid[7][2] = new Bishop(ChessPiece::Black);
-    m_grid[7][3] = new Queen(ChessPiece::Black);
-    m_grid[7][4] = new King(ChessPiece::Black);
-    m_grid[7][5] = new Bishop(ChessPiece::Black);
-    m_grid[7][6] = new Knight(ChessPiece::Black);
-    m_grid[7][7] = new Rook(ChessPiece::Black);
+    m_grid[0][0] = new Rook(ChessPiece::Black);
+    m_grid[0][1] = new Knight(ChessPiece::Black);
+    m_grid[0][2] = new Bishop(ChessPiece::Black);
+    m_grid[0][3] = new Queen(ChessPiece::Black);
+    m_grid[0][4] = new King(ChessPiece::Black);
+    m_grid[0][5] = new Bishop(ChessPiece::Black);
+    m_grid[0][6] = new Knight(ChessPiece::Black);
+    m_grid[0][7] = new Rook(ChessPiece::Black);
     for(int i=0; i<8; i++)
     {
-        m_grid[6][i] = new Pawn(ChessPiece::Black);
+        m_grid[1][i] = new Pawn(ChessPiece::Black);
     }
 }
 
@@ -80,7 +79,6 @@ void ChessBoard::movePiece(const QPoint& from, const QPoint& to)
     if(!tryMovePiece(from, to)) return;
 
     ChessPiece *piece = getPieceAt(from);
-    // TODO: zniszczyć pion zbijany
     ChessPiece *toPiece = getPieceAt(to);
     if(toPiece != nullptr) delete(toPiece);
 
@@ -177,7 +175,7 @@ void ChessBoard::handlePromotion(const QPoint &pos)
 {
     ChessPiece *piece = getPieceAt(pos);
     ChessPiece::Color color = piece->getColor();
-    int promotionY = (color == ChessPiece::White) ? 7 : 0;
+    int promotionY = (color == ChessPiece::White) ? 0 : 7;
     if(pos.y() == promotionY){
         delete piece;
         piece = new Queen(color);
@@ -206,7 +204,6 @@ bool ChessBoard::isGuardedByEnemy(ChessPiece::Color color, const QPoint &to) con
                 int directionModifier = (color==ChessPiece::Color::White?-1:1);
                 int dx = std::abs(to.x() - col);
                 int dy = (to.y() - row) * directionModifier;
-                // qDebug() << QString("row=%1 col=%2 dx=%3 dy=%4 to.x=%5 to.y=%6").arg(row).arg(col).arg(dx).arg(dy).arg(to.x()).arg(to.y());
                 if(dx==1 && dy==1) return true;
             }
             else if(ChessBoard::tryMovePiece(from, to)) return true;

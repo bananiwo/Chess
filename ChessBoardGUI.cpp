@@ -85,7 +85,6 @@ void ChessBoardGUI::drawAllSquares()
 
 void ChessBoardGUI::swapSides()
 {
-    qDebug() << "ChessBoardGUI::swapSides";
     m_isBoardReversed = !m_isBoardReversed;
     setLabels();
 }
@@ -110,8 +109,6 @@ void ChessBoardGUI::setLabels()
         label->setText(QString::number(number));
     }
 }
-
-
 
 void ChessBoardGUI::handleSquareClicked()
 {

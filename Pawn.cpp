@@ -7,7 +7,7 @@ bool Pawn::canMove(const QPoint &from, const QPoint &to) const
     if(to==from) return false;
 
     // normal one-square move
-    int direction = m_color == ChessPiece::White ? 1 : -1;
+    int direction = m_color == ChessPiece::White ? -1 : 1;
     if((to.x() == from.x()) &&
         to.y() == from.y()+direction)
     {
