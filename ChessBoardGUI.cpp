@@ -128,10 +128,23 @@ void ChessBoardGUI::handleSquareClicked(int row, int col)
 
 void ChessBoardGUI::highlightSquareBlueBorder(QPoint position)
 {
+    QPoint pos = mirrorPointIfNeeded(position);
+    m_boardSquares[pos.y()][pos.x()]->setHighlight(ChessSquareItem::Selected);
 }
 
 void ChessBoardGUI::highlightSquareRedBorder(QPoint position)
 {
+    QPoint pos = mirrorPointIfNeeded(position);
+    m_boardSquares[pos.y()][pos.x()]->setHighlight(ChessSquareItem::AvailableMove);
+}
+
+void ChessBoardGUI::clearHighlights()
+{
+    for (int row = 0; row < 8; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            m_boardSquares[row][col]->setHighlight(ChessSquareItem::None);
+        }
+    }
 }
 
 void ChessBoardGUI::setPieceAt(QPoint pos, const PieceData& data)

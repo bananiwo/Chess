@@ -61,7 +61,7 @@ void Controller::onCellClicked(int row, int column)
         {   // ont not successful move
             qDebug("Not a valid move");
         }
-
+        m_view->clearHighlights();
         updateView();
         m_gameState = GameState::SelectPiece;
     }
@@ -87,5 +87,6 @@ void Controller::restart()
     m_model->restartBoard();
     m_gameState = GameState::SelectPiece;
     m_turn = ChessPiece::Color::White;
+    m_view->clearHighlights();
     updateView();
 }

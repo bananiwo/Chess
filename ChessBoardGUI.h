@@ -32,6 +32,7 @@ public:
     void setPieceAt(QPoint pos, const PieceData& data);
     void highlightSquareBlueBorder(QPoint position);
     void highlightSquareRedBorder(QPoint position);
+    void clearHighlights();
     void swapSides();
 
 private:
