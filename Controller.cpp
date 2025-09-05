@@ -16,7 +16,6 @@ Controller::Controller(ChessBoardGUI *view, ChessBoard *model, QObject *parent)
 
 void Controller::updateView()
 {
-    m_view->drawAllSquares();
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             QPoint pos(col, row);
@@ -52,7 +51,6 @@ void Controller::onCellClicked(int row, int column)
     }
     else if (m_gameState == GameState::MovePiece)
     {
-        qDebug("GameState::MovePiece");
         ChessPiece *piece = m_model->getPieceAt(pos);
         if(m_model->tryMovePiece(m_selectedPos, pos))
         {   // on successful move

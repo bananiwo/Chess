@@ -5,9 +5,12 @@
 ChessBoardGUI::ChessBoardGUI(QWidget *parent)
     : QWidget{parent}
 {
-    m_gridLayout = new QGridLayout();
-    m_gridLayout->setSpacing(0);
-    setLayout(m_gridLayout);
+    m_graphicsView = new QGraphicsView(this);
+    m_scene = new QGraphicsScene(this);
+    m_graphicsView->setScene(m_scene);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(m_graphicsView);
+    setLayout(layout);
     loadIcons();
     setupChessBoard();
 }
@@ -16,37 +19,59 @@ ChessBoardGUI::ChessBoardGUI(QWidget *parent)
 void ChessBoardGUI::setupChessBoard()
 {
     const int boardSize = 8;
-    m_boardSquares.resize(boardSize);
+    const int squareSize = 85;
 
-    for (int row = 0; row < boardSize; ++row) {
+    m_scene->clear();
+    m_boardSquares.resize(boardSize);
+    for (int row = 0; row < boardSize; ++row)
+    {
         m_boardSquares[row].resize(boardSize);
 
-        for (int col = 0; col < boardSize; ++col) {
-            QPushButton *square = new QPushButton(this);
-            square->setFixedSize(85, 85);
-            m_gridLayout->addWidget(square, row, col+1);
+        for (int col = 0; col < boardSize; ++col)
+        {
+            QRectF rect(col * squareSize, row * squareSize, squareSize, squareSize);
+            ChessSquareItem *square = new ChessSquareItem(row, col, rect);
+            m_scene->addItem(square);
+            square->onClicked = [this](int r, int c){handleSquareClicked(r, c);};
             m_boardSquares[row][col] = square;
+            square->setFlag(QGraphicsItem::ItemIsSelectable);
 
-            connect(square, &QPushButton::clicked, this, &ChessBoardGUI::handleSquareClicked);
-            square->setProperty("row", row);
-            square->setProperty("col", col);
+            // ustawienie kolorów
+            QColor color = ((row + col) % 2 == 0) ? QColor("#EEEED2") : QColor("#769656");
+            square->setBrush(QBrush(color));
+
+            m_pieceItems[col][row] = nullptr;
         }
     }
-    // Setup horizontal and vertical labels
-    for (int row = 0; row < boardSize; ++row) {
-        QLabel *label = new QLabel();
-        label->setAlignment(Qt::AlignCenter);
-        m_horizontalLabels[row] = label;
-        m_gridLayout ->addWidget(label,8,row+1);
-    }
+
+    // Koordynaty pól planszy
+    QFont font("Arial", 12, QFont::Bold);
+    // Poziome (a-h)
     for (int col = 0; col < boardSize; ++col) {
-        QLabel *label = new QLabel();
-        label->setAlignment(Qt::AlignCenter);
-        m_verticalLabels[col] = label;
-        m_gridLayout ->addWidget(label,col, 0);
+        QGraphicsTextItem *label = m_scene->addText("", font);
+        label->setDefaultTextColor(Qt::white);
+        label->setPos(col * squareSize + squareSize / 2 - 5, boardSize * squareSize + 5);
+        m_horizontalLabels[col] = label;
+    }
+    // Pionowe (1-8)
+    for (int row = 0; row < boardSize; ++row) {
+        QGraphicsTextItem *label = m_scene->addText("", font);
+        label->setDefaultTextColor(Qt::white);
+        label->setPos(-20, row * squareSize + squareSize / 2 - 10);
+        m_verticalLabels[row] = label;
     }
     setLabels();
-    drawAllSquares();
+
+    int totalWidth  = boardSize * squareSize;
+    int totalHeight = boardSize * squareSize + 40;
+
+    m_scene->setSceneRect(-30, 0, totalWidth + 50, totalHeight);
+
+    m_graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_graphicsView->setFixedSize(m_scene->sceneRect().size().toSize());
+
+    setFixedSize(m_graphicsView->size());
 }
 
 void ChessBoardGUI::loadIcons()
@@ -66,22 +91,6 @@ void ChessBoardGUI::loadIcons()
     m_blackKing = QIcon(":/images/images/black-king.png");
 }
 
-void ChessBoardGUI::drawAllSquares()
-{
-    for (int row = 0; row < 8; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            QPushButton *square = m_boardSquares[row][col];
-            if((row+col)%2==0)
-                square->setStyleSheet("background-color: white;"
-                                      "border-style: outset;"
-                                      );
-            else
-                square->setStyleSheet("background-color: gray;"
-                                      "border-style: outset;"
-                                      );
-        }
-    }
-}
 
 void ChessBoardGUI::swapSides()
 {
@@ -99,24 +108,18 @@ QPoint ChessBoardGUI::mirrorPointIfNeeded(QPoint point)
 void ChessBoardGUI::setLabels()
 {
     for (int col = 0; col < 8; ++col) {
-        QLabel *label =  m_horizontalLabels[col];
-        QChar text = m_isBoardReversed ? QChar('H' - col) : QChar('A' + col);
-        label->setText(QString(text));
+        QString text = m_isBoardReversed ? QString(QChar('h' - col)) : QString(QChar('a' + col));
+        m_horizontalLabels[col]->setPlainText(text);
     }
     for (int row = 0; row < 8; ++row) {
-        QLabel *label =  m_verticalLabels[row];
-        int number = m_isBoardReversed ? row+1 : 8-row;
-        label->setText(QString::number(number));
+        QString text = m_isBoardReversed ? QString::number(row+1) : QString::number(8 - row);
+        m_verticalLabels[row]->setPlainText(text);
     }
 }
 
-void ChessBoardGUI::handleSquareClicked()
+void ChessBoardGUI::handleSquareClicked(int row, int col)
 {
-    QPushButton *clickedButton = qobject_cast<QPushButton*>(sender());
-    if(!clickedButton) return;
-
-    int row = clickedButton->property("row").toInt();
-    int col = clickedButton->property("col").toInt();
+    qDebug() << "clicked " << " row "<< row << " col " <<col;
     row = m_isBoardReversed ? (7-row) : row;
     col = m_isBoardReversed ? (7-col) : col;
 
@@ -125,63 +128,49 @@ void ChessBoardGUI::handleSquareClicked()
 
 void ChessBoardGUI::highlightSquareBlueBorder(QPoint position)
 {
-    position = mirrorPointIfNeeded(position);
-    QPushButton *square = m_boardSquares[position.y()][position.x()];
-    if((position.x()+position.y())%2==0)
-        square->setStyleSheet("background-color: white;"
-                              "border: 2px solid blue");
-    else
-        square->setStyleSheet("background-color: gray;"
-                              "border: 2px solid blue");
 }
 
 void ChessBoardGUI::highlightSquareRedBorder(QPoint position)
 {
-    position = mirrorPointIfNeeded(position);
-    QPushButton *square = m_boardSquares[position.y()][position.x()];
-    if((position.x()+position.y())%2==0)
-        square->setStyleSheet("background-color: white;"
-                               "border: 2px solid red"
-                              );
-    else
-        square->setStyleSheet("background-color: gray;"
-                               "border: 2px solid red"
-                              );
 }
 
 void ChessBoardGUI::setPieceAt(QPoint pos, const PieceData& data)
 {
     pos = mirrorPointIfNeeded(pos);
-    QPushButton* square = m_boardSquares[pos.y()][pos.x()];
-    QIcon icon;
-
-    if (data.type == PieceType::None) {
-        square->setIcon(QIcon());
-        return;
+    // Remove old piece if exists
+    if (m_pieceItems[pos.y()][pos.x()]) {
+        delete m_pieceItems[pos.y()][pos.x()];
+        m_pieceItems[pos.y()][pos.x()] = nullptr;
     }
 
+    QPixmap pixmap;
     if (data.color == ChessPiece::White) {
         switch (data.type) {
-        case PieceType::Pawn: icon = m_whitePawn; break;
-        case PieceType::Rook: icon = m_whiteRook; break;
-        case PieceType::Knight: icon = m_whiteKnight; break;
-        case PieceType::Bishop: icon = m_whiteBishop; break;
-        case PieceType::Queen: icon = m_whiteQueen; break;
-        case PieceType::King: icon = m_whiteKing; break;
+        case PieceType::Pawn: pixmap = m_whitePawn.pixmap(80, 80); break;
+        case PieceType::Rook: pixmap= m_whiteRook.pixmap(80,80); break;
+        case PieceType::Knight: pixmap= m_whiteKnight.pixmap(80,80); break;
+        case PieceType::Bishop: pixmap= m_whiteBishop.pixmap(80,80); break;
+        case PieceType::Queen: pixmap= m_whiteQueen.pixmap(80,80); break;
+        case PieceType::King: pixmap= m_whiteKing.pixmap(80,80); break;
         default: break;
         }
     } else {
         switch (data.type) {
-        case PieceType::Pawn: icon = m_blackPawn; break;
-        case PieceType::Rook: icon = m_blackRook; break;
-        case PieceType::Knight: icon = m_blackKnight; break;
-        case PieceType::Bishop: icon = m_blackBishop; break;
-        case PieceType::Queen: icon = m_blackQueen; break;
-        case PieceType::King: icon = m_blackKing; break;
+        case PieceType::Pawn: pixmap = m_blackPawn.pixmap(80,80); break;
+        case PieceType::Rook: pixmap = m_blackRook.pixmap(80,80); break;
+        case PieceType::Knight: pixmap = m_blackKnight.pixmap(80,80); break;
+        case PieceType::Bishop: pixmap = m_blackBishop.pixmap(80,80); break;
+        case PieceType::Queen: pixmap = m_blackQueen.pixmap(80,80); break;
+        case PieceType::King: pixmap = m_blackKing.pixmap(80,80); break;
         default: break;
         }
     }
+    // Draw new piece
+    QRectF squareRect = m_boardSquares[pos.y()][pos.x()]->rect();
+    QGraphicsPixmapItem* pieceItem = m_scene->addPixmap(pixmap);
+    pieceItem->setZValue(1);
+    pieceItem->setPos(squareRect.topLeft() + QPointF((squareRect.width() - pixmap.width())/2,
+                                                     (squareRect.height() - pixmap.height())/2));
 
-    square->setIcon(icon);
-    square->setIconSize(QSize(80, 80));
+    m_pieceItems[pos.y()][pos.x()] = pieceItem;
 }
