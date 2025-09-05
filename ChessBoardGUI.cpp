@@ -1,11 +1,6 @@
 #include "ChessBoardGUI.h"
-#include "Rook.h"
-#include "Pawn.h"
-#include "Bishop.h"
-#include "Knight.h"
-#include "Queen.h"
-#include "King.h"
-#include <iostream>
+#include <QLabel>
+#include <QChar>
 
 ChessBoardGUI::ChessBoardGUI(QWidget *parent)
     : QWidget{parent}
@@ -29,7 +24,7 @@ void ChessBoardGUI::setupChessBoard()
         for (int col = 0; col < boardSize; ++col) {
             QPushButton *square = new QPushButton(this);
             square->setFixedSize(85, 85);
-            m_gridLayout->addWidget(square, row, col);
+            m_gridLayout->addWidget(square, row, col+1);
             m_boardSquares[row][col] = square;
 
             connect(square, &QPushButton::clicked, this, &ChessBoardGUI::handleSquareClicked);
@@ -37,6 +32,20 @@ void ChessBoardGUI::setupChessBoard()
             square->setProperty("col", col);
         }
     }
+    // Setup horizontal and vertical labels
+    for (int row = 0; row < boardSize; ++row) {
+        QLabel *label = new QLabel();
+        label->setAlignment(Qt::AlignCenter);
+        m_horizontalLabels[row] = label;
+        m_gridLayout ->addWidget(label,8,row+1);
+    }
+    for (int col = 0; col < boardSize; ++col) {
+        QLabel *label = new QLabel();
+        label->setAlignment(Qt::AlignCenter);
+        m_verticalLabels[col] = label;
+        m_gridLayout ->addWidget(label,col, 0);
+    }
+    setLabels();
     drawAllSquares();
 }
 
@@ -78,7 +87,7 @@ void ChessBoardGUI::swapSides()
 {
     qDebug() << "ChessBoardGUI::swapSides";
     m_isBoardReversed = !m_isBoardReversed;
-
+    setLabels();
 }
 
 QPoint ChessBoardGUI::mirrorPointIfNeeded(QPoint point)
@@ -86,6 +95,20 @@ QPoint ChessBoardGUI::mirrorPointIfNeeded(QPoint point)
     int revX = m_isBoardReversed ? (7-point.x()) : point.x();
     int revY = m_isBoardReversed ? (7-point.y()) : point.y();
     return QPoint(revX, revY);
+}
+
+void ChessBoardGUI::setLabels()
+{
+    for (int col = 0; col < 8; ++col) {
+        QLabel *label =  m_horizontalLabels[col];
+        QChar text = m_isBoardReversed ? QChar('H' - col) : QChar('A' + col);
+        label->setText(QString(text));
+    }
+    for (int row = 0; row < 8; ++row) {
+        QLabel *label =  m_verticalLabels[row];
+        int number = m_isBoardReversed ? row+1 : 8-row;
+        label->setText(QString::number(number));
+    }
 }
 
 

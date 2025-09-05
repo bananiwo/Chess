@@ -6,6 +6,7 @@
 #include <QGridLayout>
 #include <QVector>
 #include <QPushButton>
+#include <QLabel>
 
 class ChessBoardGUI : public QWidget
 {
@@ -32,6 +33,8 @@ public:
 private:
     QGridLayout *m_gridLayout;
     QVector<QVector<QPushButton*>> m_boardSquares;
+    QLabel *m_horizontalLabels[8];
+    QLabel *m_verticalLabels[8];
     QPoint m_selectedPosition;
     bool m_isBoardReversed = false;
     QIcon m_whitePawn;
@@ -49,5 +52,6 @@ private:
 
 
     QPoint mirrorPointIfNeeded(QPoint point);
+    void setLabels();
     void loadIcons();
 };
