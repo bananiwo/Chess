@@ -35,11 +35,6 @@ void ChessBoardGUI::setupChessBoard()
             square->onClicked = [this](int r, int c){handleSquareClicked(r, c);};
             m_boardSquares[row][col] = square;
             square->setFlag(QGraphicsItem::ItemIsSelectable);
-
-            // ustawienie kolorów
-            QColor color = ((row + col) % 2 == 0) ? QColor("#EEEED2") : QColor("#769656");
-            square->setBrush(QBrush(color));
-
             m_pieceItems[col][row] = nullptr;
         }
     }
@@ -72,6 +67,12 @@ void ChessBoardGUI::setupChessBoard()
     m_graphicsView->setFixedSize(m_scene->sceneRect().size().toSize());
 
     setFixedSize(m_graphicsView->size());
+    foreach (auto a, m_boardSquares) {
+        foreach (auto sq, a) {
+            sq->setBrush(QBrush(QColorConstants::White));
+        }
+
+    }
 }
 
 void ChessBoardGUI::loadIcons()

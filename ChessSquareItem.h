@@ -41,7 +41,7 @@ protected:
         painter->setBrush(brush());
         painter->setPen(QPen(Qt::NoPen));
         painter->drawRect(rect());
-        QColor baseColor = ((m_row + m_col) % 2 == 0) ? QColor("#E57A44") : QColor("#E3D985");
+        QColor baseColor = ((m_row + m_col) % 2 == 0) ? QColor("#ededda") : QColor("#6ca67b");
         painter->setBrush(baseColor);
         painter->setPen(QPen(Qt::black, 1));
         painter->drawRect(rect());
