@@ -109,18 +109,17 @@ QPoint ChessBoardGUI::mirrorPointIfNeeded(QPoint point)
 void ChessBoardGUI::setLabels()
 {
     for (int col = 0; col < 8; ++col) {
-        QString text = m_isBoardReversed ? QString(QChar('h' - col)) : QString(QChar('a' + col));
+        QString text = m_isBoardReversed ?  QString(QChar('a' + col)) : QString(QChar('h' - col));
         m_horizontalLabels[col]->setPlainText(text);
     }
     for (int row = 0; row < 8; ++row) {
-        QString text = m_isBoardReversed ? QString::number(row+1) : QString::number(8 - row);
+        QString text = m_isBoardReversed ? QString::number(8-row) : QString::number(row+1);
         m_verticalLabels[row]->setPlainText(text);
     }
 }
 
 void ChessBoardGUI::handleSquareClicked(int row, int col)
 {
-    qDebug() << "clicked " << " row "<< row << " col " <<col;
     row = m_isBoardReversed ? (7-row) : row;
     col = m_isBoardReversed ? (7-col) : col;
 

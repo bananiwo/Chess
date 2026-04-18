@@ -20,7 +20,7 @@ private:
     bool isStraightPathClear(const QPoint &from, const QPoint &to) const;
     bool isDestinationValid(const QPoint &from, const QPoint &to) const;
     bool isPawnCaptureValid(const QPoint &from, const QPoint &to) const;
-    void handlePromotion(const QPoint &pos);
+    ChessPiece *handlePromotion(const QPoint &pos);
     bool isGuardedByEnemy(ChessPiece::Color color, const QPoint &to) const;
 
 

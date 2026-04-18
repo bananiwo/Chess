@@ -5,7 +5,7 @@
 #include "Knight.h"
 #include "Queen.h"
 #include "King.h"
-#include <qDebug>
+#include "PiecesSetup.h"
 
 ChessBoard::ChessBoard()
 {
@@ -24,32 +24,8 @@ ChessPiece* ChessBoard::getPieceAt(const QPoint& pos) const
 
 void ChessBoard::setupBoard()
 {
-    // setup white
-    m_grid[7][0] = new Rook(ChessPiece::White);
-    m_grid[7][1] = new Knight(ChessPiece::White);
-    m_grid[7][2] = new Bishop(ChessPiece::White);
-    m_grid[7][3] = new Queen(ChessPiece::White);
-    m_grid[7][4] = new King(ChessPiece::White);
-    m_grid[7][5] = new Bishop(ChessPiece::White);
-    m_grid[7][6] = new Knight(ChessPiece::White);
-    m_grid[7][7] = new Rook(ChessPiece::White);
-    for(int i=0; i<8; i++)
-    {
-        m_grid[6][i] = new Pawn(ChessPiece::White);
-    }
-    // setup black
-    m_grid[0][0] = new Rook(ChessPiece::Black);
-    m_grid[0][1] = new Knight(ChessPiece::Black);
-    m_grid[0][2] = new Bishop(ChessPiece::Black);
-    m_grid[0][3] = new Queen(ChessPiece::Black);
-    m_grid[0][4] = new King(ChessPiece::Black);
-    m_grid[0][5] = new Bishop(ChessPiece::Black);
-    m_grid[0][6] = new Knight(ChessPiece::Black);
-    m_grid[0][7] = new Rook(ChessPiece::Black);
-    for(int i=0; i<8; i++)
-    {
-        m_grid[1][i] = new Pawn(ChessPiece::Black);
-    }
+    // m_grid = PiecesSetup::SetupNormal();
+    m_grid = PiecesSetup::CustomSetup();
 }
 
 bool ChessBoard::tryMovePiece(const QPoint& from, const QPoint& to) const
@@ -58,18 +34,21 @@ bool ChessBoard::tryMovePiece(const QPoint& from, const QPoint& to) const
     if(!piece) return false;
     if(!piece->canMove(from, to)) return false;
     if(!isDestinationValid(from, to)) return false;
-    if(dynamic_cast<Bishop*>(piece)){
-        if(!isDiagonalPathClear(from, to)) return false;
-    } else if(dynamic_cast<Rook*>(piece)){
-        if(!isStraightPathClear(from, to)) return false;
-    }  else if(dynamic_cast<Queen*>(piece)){
-        if(!isDiagonalPathClear(from, to) && !isStraightPathClear(from, to)) return false;
-    }  else if(dynamic_cast<Pawn*>(piece)){
-        if(!isPawnCaptureValid(from, to)) return false;
-    }  else if(dynamic_cast<King*>(piece)){
-        if(isGuardedByEnemy(piece->getColor(), to)) return false;
+    // if(dynamic_cast<Bishop*>(piece)){
+    switch(piece->type()){
+        case ChessPiece::PieceType::Bishop:
+            if(!isDiagonalPathClear(from, to)) return false; break;
+        case ChessPiece::PieceType::Rook:
+            if(!isStraightPathClear(from, to)) return false; break;
+        case ChessPiece::PieceType::King:
+            if(isGuardedByEnemy(piece->getColor(), to)) return false; break;
+        case ChessPiece::PieceType::Queen:
+            if(!isDiagonalPathClear(from, to) && !isStraightPathClear(from, to)) return false; break;
+        case ChessPiece::PieceType::Pawn:
+            if(!isPawnCaptureValid(from, to)) return false; break;
+        default:
+            return true;
     }
-
 
     return true;
 }
@@ -88,7 +67,7 @@ void ChessBoard::movePiece(const QPoint& from, const QPoint& to)
     if(dynamic_cast<Pawn*>(piece))
     {
         piece->setHasMovedTrue();
-        handlePromotion(to);
+        piece = handlePromotion(to);
     }
 }
 
@@ -171,16 +150,17 @@ bool ChessBoard::isPawnCaptureValid(const QPoint &from, const QPoint &to) const
     return false;
 }
 
-void ChessBoard::handlePromotion(const QPoint &pos)
+ChessPiece* ChessBoard::handlePromotion(const QPoint &pos)
 {
     ChessPiece *piece = getPieceAt(pos);
     ChessPiece::Color color = piece->getColor();
-    int promotionY = (color == ChessPiece::White) ? 0 : 7;
+    int promotionY = (color == ChessPiece::White) ? 7 : 0;
     if(pos.y() == promotionY){
         delete piece;
         piece = new Queen(color);
         m_grid[pos.y()][pos.x()] = piece;
     }
+    return piece;
 }
 
 bool ChessBoard::isGuardedByEnemy(ChessPiece::Color color, const QPoint &to) const

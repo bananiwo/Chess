@@ -43,7 +43,7 @@ private:
     QGraphicsTextItem *m_horizontalLabels[8];
     QGraphicsTextItem *m_verticalLabels[8];
     QPoint m_selectedPosition;
-    bool m_isBoardReversed = false;
+    bool m_isBoardReversed = true;
     QIcon m_whitePawn, m_whiteRook, m_whiteBishop, m_whiteKnight, m_whiteQueen, m_whiteKing;
     QIcon m_blackPawn, m_blackRook, m_blackBishop, m_blackKnight, m_blackQueen, m_blackKing;
 

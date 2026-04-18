@@ -6,7 +6,6 @@
 #include "Knight.h"
 #include "Queen.h"
 #include "King.h"
-#include <QDebug>
 
 Controller::Controller(ChessBoardGUI *view, ChessBoard *model, QObject *parent)
     : QObject{parent}, m_view(view), m_model(model)
@@ -30,7 +29,6 @@ void Controller::onCellClicked(int row, int column)
     QPoint pos(column, row);
     if(m_gameState == GameState::SelectPiece)
     {
-        qDebug("GameState::SelectPiece");
         ChessPiece *piece = m_model->getPieceAt(pos);
         if(!piece) return;
         if(m_turn != piece->getColor()) return;
@@ -58,8 +56,7 @@ void Controller::onCellClicked(int row, int column)
             m_turn = (m_turn == ChessPiece::Color::White ? ChessPiece::Color::Black : ChessPiece::Color::White);
         }
         else
-        {   // ont not successful move
-            qDebug("Not a valid move");
+        {   // on not successful move
         }
         m_view->clearHighlights();
         updateView();
